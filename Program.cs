@@ -9,8 +9,8 @@ namespace HeistPartDuex
         static void Main(string[] args)
         {
             //Create the team options here
-            LockSpecialist lockpicker1 = new LockSpecialist("Kevin", 85, 30);
-            LockSpecialist lockpicker2 = new LockSpecialist("Kevin", 70, 20);
+            LockSpecialist lockpicker1 = new LockSpecialist("George", 85, 30);
+            LockSpecialist lockpicker2 = new LockSpecialist("Tammy", 70, 20);
 
             Hacker hacker1 = new Hacker("Will", 89, 30);
             Hacker hacker2 = new Hacker("Curtis", 67, 20);
@@ -36,7 +36,7 @@ namespace HeistPartDuex
                 Console.WriteLine("Select the number for their skillset> ");
                 Console.WriteLine("1) Hacker (Disables alarms)");
                 Console.WriteLine("2) Lock Specialist (Cracks safes)");
-                Console.WriteLine("1) Muscle (Disables guards)");
+                Console.WriteLine("3) Muscle (Disables guards)");
                 Console.WriteLine();
 
                 //store user input in to variable
@@ -89,7 +89,77 @@ namespace HeistPartDuex
             Console.WriteLine($"Most Secure Security: {mostSecure}");
             Console.WriteLine($"Least Secure System: {leastSecure}");
 
+            //Create a crew list
+            List<IRobber> crew = new List<IRobber>();
 
+            //Print out the list of crew with their specialty, skill level and percentage of cut. Include index number so user can select them in next step.
+            Console.WriteLine("Your options for crew:");
+            for (int i = 0; i < rolodex.Count(); i++) {
+                Console.WriteLine($"{i}. {rolodex[i].Name}");
+                Console.WriteLine($"Specialty: {rolodex[i].Specialty}");
+                Console.WriteLine($"Skill Level: {rolodex[i].SkillLevel}");
+                Console.WriteLine($"Percentage Cut Required: {rolodex[i].PercentageCut}");
+                Console.WriteLine(); 
+            }
+
+            //User selects the first member of the team
+            Console.WriteLine("Enter the number for the operative you want to add> ");
+            string operativeChoice = Console.ReadLine();
+
+            //establish variable for percentage of take remaining
+            int percentageLeft = 100;
+
+            //while loop
+            while (operativeChoice != "" && percentageLeft > 0) {
+                int crewIndex = int.Parse(operativeChoice);
+                percentageLeft = percentageLeft - rolodex[crewIndex].PercentageCut;
+                crew.Add(rolodex[crewIndex]);
+                Console.WriteLine($"Remaining Cut: {percentageLeft}");
+                Console.WriteLine();
+
+                //Print out the report after each crew member is selected
+                for (int i = 0; i < rolodex.Count(); i++) {
+                    if (percentageLeft >= rolodex[i].PercentageCut && crew.Contains(rolodex[i]) == false) {
+                        Console.WriteLine($"{i}. {rolodex[i].Name}");
+                        Console.WriteLine($"Specialty: {rolodex[i].Specialty}");
+                        Console.WriteLine($"Skill Level: {rolodex[i].SkillLevel}");
+                        Console.WriteLine($"Percentage Cut Required: {rolodex[i].PercentageCut}");
+                        Console.WriteLine(); 
+                    }
+                }
+
+                //Select another operative
+                Console.WriteLine("Enter the number to select your next member of the crew");
+                operativeChoice = Console.ReadLine();
+            }
+
+            //Begin the heist
+            //Crew member should perform their skill so foreach through the crew
+
+            foreach(IRobber robber in crew) {
+                robber.PerformSkill(newBankToHit);
+            }
+            if (newBankToHit.IsSecure) {
+                Console.WriteLine("Unfortunately you failed!");
+            } else {
+                //if the bank reports back with 0 or less left we won
+                Console.WriteLine("Awesome, you pulled it off and are rich!");
+                // If the heist was a success, print out a report of each members' take, along with how much money is left for yourself.
+                Console.WriteLine("FINAL REPORT:");
+                Console.WriteLine($"Total Haul: {newBankToHit.CashOnHand}");
+                int totalCash = newBankToHit.CashOnHand;
+                //this will foreach through each crew taking out their cut to see what's left
+                foreach(IRobber robber in crew) {
+                    int crewTake = newBankToHit.CashOnHand * robber.PercentageCut/100;
+                    totalCash -= crewTake;
+                    Console.WriteLine($"{robber.Name} got {crewTake}");
+                }
+                //this is outside of the above foreach so the amount of cash left is our take
+                Console.WriteLine($"You're taking home {totalCash}");
+            }
+
+
+ 
               
 
 

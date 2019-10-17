@@ -10,9 +10,9 @@ namespace HeistPartDuex {
 
         public void BankSecurity() {
             if(AlarmScore <= 0 && VaultScore <= 0 && SecurityGuardScore <= 0) {
-                IsSecure = true;
-            } else if (AlarmScore >= 0 || VaultScore >= 0 || SecurityGuardScore >= 0) {
                 IsSecure = false;
+            } else if (AlarmScore >= 0 || VaultScore >= 0 || SecurityGuardScore >= 0) {
+                IsSecure = true;
             };
         }
 
